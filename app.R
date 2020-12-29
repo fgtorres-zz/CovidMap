@@ -28,6 +28,8 @@ ui <- fluidPage(
             
             textInput("termociclador", "Termociclador", value = "", width = NULL, placeholder = NULL),
             
+            textInput("lotepcr", "Lote PCR", value = "", width = NULL, placeholder = NULL),
+            
             textInput("data", "Data", value = "", width = NULL, placeholder = NULL),
             
             fileInput('target_upload', 'Choose file to upload',
@@ -86,16 +88,20 @@ server <- function(input, output) {
             gene<-1
             
             #DIAGNOSTICO DO KIT SEEGENE
+            kitpcr = "Allplex"
             diagnostico = data.frame(ID = "",
-                                     Galeria = "",
+                                     diagnostico = "",
                                      Placa = input$placa,
-                                     Termociclador = input$termociclador,
                                      Data = input$data,
+                                     Termociclador = input$termociclador,
+                                     KitPCR = "",
+                                     LotePCR = "",
+                                     Galeria = "",
                                      Ct_gene1 = "",
                                      Ct_gene2 = "",
                                      Ct_gene3 = "",
-                                     Ct_gene4 = "",
-                                     diagnostico = "" )
+                                     Ct_gene4 = "", 
+                                     RetestePCR = "0" )
             
             
             diagnostico<- diagnostico[-1,]
@@ -166,20 +172,22 @@ server <- function(input, output) {
                     }
                     
                     amostra_data <- data.frame(ID = as.character(amostra),
-                                               Galeria = as.character(well),
+                                               diagnostico = diagcovid,
                                                Placa = as.character(input$placa),
-                                               Termociclador = as.character(input$termociclador),
                                                Data = as.character(input$data),
+                                               Termociclador = as.character(input$termociclador),
+                                               KitPCR = kitpcr,
+                                               LotePCR = as.character(input$lotepcr),
+                                               Galeria = as.character(well),
                                                Ct_gene1 = as.character(gene1),
                                                Ct_gene2 = as.character(gene2),
                                                Ct_gene3 = as.character(gene3),
                                                Ct_gene4 = as.character(gene4),
-                                               diagnostico = diagcovid)
+                                               RetestePCR = "0")
                     
                     diagnostico =  rbind(diagnostico, amostra_data)
                 }
             }
-            
             
             write.csv(diagnostico,
                       paste(as.character(folder_path),
