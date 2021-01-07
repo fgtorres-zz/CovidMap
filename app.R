@@ -109,6 +109,7 @@ server <- function(input, output) {
             while(i< nrow(df)){
                 i<-i+1
                 amostra<- df[i,2]
+                reteste<-0
                 well<- df[i,1]
                 diagcovid = ""
                 
@@ -169,6 +170,7 @@ server <- function(input, output) {
                     #Inconclusivo
                     if (testegene2==1 && testegene3==0 && testegene4==0){
                         diagcovid = "Inconclusivo"
+                        reteste = 1
                     }
                     
                     amostra_data <- data.frame(ID = as.character(amostra),
@@ -183,7 +185,7 @@ server <- function(input, output) {
                                                Ct_gene2 = as.character(gene2),
                                                Ct_gene3 = as.character(gene3),
                                                Ct_gene4 = as.character(gene4),
-                                               RetestePCR = "0")
+                                               RetestePCR = as.character(reteste))
                     
                     diagnostico =  rbind(diagnostico, amostra_data)
                 }
