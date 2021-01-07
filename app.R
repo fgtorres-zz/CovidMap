@@ -24,13 +24,13 @@ ui <- fluidPage(
                         choices = list("Allplex (SEEGENE)" = 1), 
                         selected = 1),
             
-            textInput("placa", "Placa", value = "", width = NULL, placeholder = NULL),
+            textInput("placa", "ID da placa de extração", value = "", width = NULL, placeholder = NULL),
             
             textInput("termociclador", "Termociclador", value = "", width = NULL, placeholder = NULL),
             
-            textInput("lotepcr", "Lote PCR", value = "", width = NULL, placeholder = NULL),
+            textInput("lotepcr", "Lote do kit do RT-qPCR", value = "", width = NULL, placeholder = NULL),
             
-            textInput("data", "Data", value = "", width = NULL, placeholder = NULL),
+            textInput("data", "Data do RT-qPCR", value = "", width = NULL, placeholder = NULL),
             
             fileInput('target_upload', 'Choose file to upload',
                       accept = c(
@@ -54,7 +54,7 @@ ui <- fluidPage(
         mainPanel(
             DT::DTOutput(outputId = "tablePlot"),
             hr(),
-            print("Esse software foi desenvolvido por Felipe G. Torres | 2020 - Direitos reservados")
+            print("Esse software foi desenvolvido pela Plataforma de Vigilancia IGM | 2020 - Direitos reservados")
         )
     )
 )
