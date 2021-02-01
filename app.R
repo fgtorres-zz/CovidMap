@@ -153,6 +153,7 @@ server <- function(input, output) {
                     # Invalidos...
                     if (testegene1==0 && testegene2==0 && testegene3==0 && testegene4==0){
                         diagcovid = "Invalido"
+                        reteste = 1
                     }
                     
                     #Nao detectados
