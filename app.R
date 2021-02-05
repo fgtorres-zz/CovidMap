@@ -164,7 +164,7 @@ server <- function(input, output) {
                     #Detectados
                     if ((testegene2==1 && testegene3==1 && testegene4==1) || (testegene2==1 && testegene3==0 && testegene4==1) ||
                         (testegene2==1 && testegene3==1 && testegene4==0) || (testegene2==0 && testegene3==1 && testegene4==1) ||
-                        (testegene2==0 && testegene3==0 && testegene4==1) || (testegene2==0 && testegene3==1 && testegene4==0)){
+                        (testegene2==0 && testegene3==1 && testegene4==0)){
                         diagcovid = "Detectado"
                     }
                     
