@@ -168,7 +168,7 @@ server <- function(input, output) {
                     }
                     
                     #Inconclusivo
-                    if ((testegene2==1 && testegene3==0 && testegene4==0) || (testegene2==0 && testegene3==1 && testegene4==1)
+                    if ((testegene2==1 && testegene3==0 && testegene4==0) || (testegene2==0 && testegene3==1 && testegene4==0)
                         || (testegene2==0 && testegene3==0 && testegene4==1) ){
                         diagcovid = "Inconclusivo"
                         reteste = 1
