@@ -163,13 +163,18 @@ server <- function(input, output) {
                     
                     #Detectados
                     if ((testegene2==1 && testegene3==1 && testegene4==1) || (testegene2==1 && testegene3==0 && testegene4==1) ||
-                        (testegene2==1 && testegene3==1 && testegene4==0) || (testegene2==0 && testegene3==1 && testegene4==1) ||
-                        (testegene2==0 && testegene3==1 && testegene4==0)){
+                        (testegene2==1 && testegene3==1 && testegene4==0) || (testegene2==0 && testegene3==1 && testegene4==1)){
                         diagcovid = "Detectado"
                     }
                     
                     #Inconclusivo
-                    if (testegene2==1 && testegene3==0 && testegene4==0){
+                    if ((testegene2==1 && testegene3==0 && testegene4==0) || (testegene2==0 && testegene3==1 && testegene4==1)
+                        || (testegene2==0 && testegene3==0 && testegene4==1) ){
+                        diagcovid = "Inconclusivo"
+                        reteste = 1
+                    }
+                    
+                    if (diagcovid==""){
                         diagcovid = "Inconclusivo"
                         reteste = 1
                     }
