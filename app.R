@@ -20,8 +20,8 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
             # Copy the line below to make a select box 
-            selectInput("select", label = h3("Select the PCR Kit"), 
-                        choices = list("Allplex (SEEGENE)" = 1), 
+            selectInput("select", label = h3("Selecione o Kit PCR"), 
+                        choices = list("Allplex (SEEGENE)" = 1, "IBMP (2021)" = 2), 
                         selected = 1),
             
             textInput("placa", "ID da placa de extração", value = "", width = NULL, placeholder = NULL),
@@ -32,7 +32,7 @@ ui <- fluidPage(
             
             textInput("data", "Data do RT-qPCR", value = "", width = NULL, placeholder = NULL),
             
-            fileInput('target_upload', 'Choose file to upload',
+            fileInput('target_upload', 'Escolha o arquivo para upload',
                       accept = c(
                           #'text/csv', '.xls'
                           #'text/comma-separated-values',
@@ -41,7 +41,7 @@ ui <- fluidPage(
                       )),
             DT::dataTableOutput("sample_table"),
             
-            downloadButton('download',"Download processed data"),
+            downloadButton('download',"Baixe os dados processados"),
             
             hr(),
             fluidRow(column(1, verbatimTextOutput("value")))
@@ -54,7 +54,7 @@ ui <- fluidPage(
         mainPanel(
             DT::DTOutput(outputId = "tablePlot"),
             hr(),
-            print("Esse software foi desenvolvido pela Plataforma de Vigilancia IGM | 2020 - Direitos reservados")
+            print("Esse software esta disponivel no GitHub CovidMap (https://github.com/fgtorres/) | 2021")
         )
     )
 )
@@ -186,6 +186,148 @@ server <- function(input, output) {
                                                Termociclador = as.character(input$termociclador),
                                                KitPCR = kitpcr,
                                                LotePCR = as.character(input$lotepcr),
+                                               Galeria = as.character(well),
+                                               Ct_gene1 = as.character(gene1),
+                                               Ct_gene2 = as.character(gene2),
+                                               Ct_gene3 = as.character(gene3),
+                                               Ct_gene4 = as.character(gene4),
+                                               RetestePCR = as.character(reteste))
+                    
+                    diagnostico =  rbind(diagnostico, amostra_data)
+                }
+            }
+            
+            write.csv(diagnostico,
+                      paste(as.character(folder_path),
+                            "/",
+                            "diagnosticos_",
+                            format(Sys.time(),
+                                   "%a %b %d %X %Y"),
+                            ".csv",
+                            sep = ""),
+                      sep = ",",
+                      quote = F)  
+            
+        ######################################################################################################################
+        # KIT IBMP
+            
+        }else if (input$select == "2"){
+            
+            
+            #Filtering the header Excel File
+            linhas <- c(1,2,3,4,5,6)
+            df<- df[-linhas,]
+            names(df) <- df[1,]
+            df<- df[-1,]
+            
+            #Spliting in sub datasets
+            i<-0
+            gene<-1
+            
+            #DIAGNOSTICO DO KIT SEEGENE
+            kitpcr = "IBMP"
+            diagnostico = data.frame(ID = "",
+                                     diagnostico = "",
+                                     Placa = input$placa,
+                                     Data = input$data,
+                                     Termociclador = input$termociclador,
+                                     KitPCR = "",
+                                     LotePCR = "",
+                                     Galeria = "",
+                                     Ct_gene1 = "",
+                                     Ct_gene2 = "",
+                                     Ct_gene3 = "",
+                                     Ct_gene4 = "", 
+                                     RetestePCR = "0" )
+            
+            
+            diagnostico<- diagnostico[-1,]
+            
+            while(i< nrow(df)){
+                i<-i+1
+                amostra<- df[i,2]
+                reteste<-0
+                well<- df[i,1]
+                diagcovid = ""
+                
+                if(gene==1){
+                    gene1<- df[i,7]
+                    gene <- gene + 1
+                }else if (gene==2){
+                    gene2<- df[i,7]
+                    gene <- gene + 1
+                }else if (gene==3){
+                    gene3<- ""
+                    gene4<- df[i,7]
+                    gene <- 1
+                    
+                    # DIAGNOSTICANDO
+                    # Teste genes negativos
+                    testegene1 = 1
+                    testegene2 = 1
+                    testegene3 = 1
+                    testegene4 = 1
+                    
+                    if (gene1  == "Undetermined" || gene1 > 40){
+                        testegene1 = 0
+                    }
+                    
+                    if (gene2  == "Undetermined" || gene2 > 40){
+                        testegene2 = 0
+                    }
+                    
+                    if (gene3  == "Undetermined" || gene3 > 40){
+                        testegene3 = 0
+                    }
+                    
+                    if (gene4  == "Undetermined" || gene4 > 40){
+                        testegene4 = 0
+                    }
+                    
+                    #Diagnosticando....
+                    # Invalidos...
+                    if (testegene1==0 && testegene2==0 && testegene3==0 && testegene4==0){
+                        diagcovid = "Invalido"
+                        reteste = 1
+                    }
+                    
+                    #Nao detectavel
+                    if (testegene1==0 && testegene2==0 && testegene4==1){
+                        diagcovid = "Nao detectado"
+                    }
+                    
+                    #Detectavel
+                    
+                    if (testegene1==1 && testegene2==1 && testegene4==1){
+                        diagcovid = "Detectado"
+                    }else if (testegene1==1 && testegene2==1 && testegene4==0){
+                        diagcovid = "Detectado"
+                    }else if (testegene1==1 && testegene2==1 && testegene4==0){
+                        diagcovid = "Detectado"
+                    }else if (testegene1==1 && testegene2==1 && testegene4==0){
+                        diagcovid = "Detectado"
+                    }else if (testegene1==1 && testegene2==0 && testegene4==1){
+                        diagcovid = "Detectado"
+                    }else if (testegene1==1 && testegene2==0 && testegene4==0){
+                        diagcovid = "Detectado"
+                    }else if (testegene1==0 && testegene2==1 && testegene4==1){
+                        diagcovid = "Detectado"
+                    }else if (testegene1==0 && testegene2==1 && testegene4==0){
+                        diagcovid = "Detectado"
+                    }
+                    
+                    if (diagcovid==""){
+                        diagcovid = "Inconclusivo"
+                        reteste = 1
+                    }
+                    
+                    amostra_data <- data.frame(ID = as.character(amostra),
+                                               diagnostico = diagcovid,
+                                               Placa = as.character(""),
+                                               Data = as.character(""),
+                                               Termociclador = as.character(""),
+                                               KitPCR = kitpcr,
+                                               LotePCR = as.character(""),
                                                Galeria = as.character(well),
                                                Ct_gene1 = as.character(gene1),
                                                Ct_gene2 = as.character(gene2),
